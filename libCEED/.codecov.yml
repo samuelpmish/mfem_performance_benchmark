@@ -1,0 +1,48 @@
+codecov:
+  branch: main
+
+fixes:
+  - "build/backends/::backends/"
+  - "build/gallery/::gallery/"
+
+ignore:
+  - "julia/LibCEED.jl/src/generated/*.jl"
+
+# CodeCov shows up in the checks on GitHub pull requests
+comment: false
+
+coverage:
+  status:
+    project:
+      default: off
+      interface:
+        flags:
+          - interface
+      backends:
+        flags:
+          - backends
+    patch:
+      default: off
+      interface:
+        flags:
+          - interface
+      backends:
+        flags:
+          - backends
+
+flags:
+  interface:
+    paths:
+      - interface/
+  gallery:
+    paths:
+      - gallery/
+  backends:
+    paths:
+      - backends/
+  tests:
+    paths:
+      - tests/
+  examples:
+    paths:
+      - examples/

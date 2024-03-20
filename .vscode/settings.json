@@ -1,0 +1,8 @@
+{
+    "cmake.configureArgs": [
+        //"-DENABLE_CUDA=ON",
+        "-DENABLE_CUDA=OFF",
+        "--profiling-format=google-trace",                                       
+        "--profiling-output=cmake-configuration-stage-profiling-data.json"
+    ]
+}

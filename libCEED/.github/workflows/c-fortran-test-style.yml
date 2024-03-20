@@ -1,0 +1,32 @@
+name: Style
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        compiler: [clang]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Environment setup
+      uses: actions/checkout@v3
+    - name: Install clang-format
+      run: |
+          wget -O- https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository 'deb http://apt.llvm.org/bullseye/ llvm-toolchain-bullseye-16 main'
+          sudo apt update && sudo apt install clang-format-16
+    - name: C style
+      env:
+        CC: ${{ matrix.compiler }}
+        FC: gfortran-11
+      run: |
+        make info
+        make format-c -j2 CLANG_FORMAT=clang-format-16 && git diff --exit-code

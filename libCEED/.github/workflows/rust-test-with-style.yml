@@ -1,0 +1,62 @@
+name: Rust
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        compiler: [clang]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Environment setup
+      uses: actions/checkout@v3
+    - name: Rust setup
+      uses: dtolnay/rust-toolchain@master
+      with:
+        # Note: nightly required for coverage of Doctests
+        toolchain: nightly
+        components: llvm-tools-preview
+    - name: Install cargo-llvm-cov
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-llvm-cov
+    - name: Rust test with coverage
+      env:
+        CC: ${{ matrix.compiler }}
+        FC: gfortran-11
+      run: cargo llvm-cov test --doctests --lcov --output-path lcov.info
+    - name: Codecov upload
+      uses: codecov/codecov-action@v3
+      with:
+        files: lcov.info
+        token: ${{secrets.CODECOV_TOKEN}}
+
+  style:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+        compiler: [clang]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Environment setup
+      uses: actions/checkout@v3
+    - name: Rust setup
+      uses: dtolnay/rust-toolchain@master
+      with:
+        # Note: rustfmt not always included in nightly, will attempt to downgrade until rustfmt found
+        toolchain: nightly
+        components: rustfmt
+    - name: Rust style
+      run: |
+        cargo +nightly fmt --version
+        cargo +nightly fmt -- --check

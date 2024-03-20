@@ -1,0 +1,84 @@
+# Build Dir
+build/*
+
+# Library Dir
+lib/*
+
+# General
+*.o
+*.so
+*.d
+*.DIR
+ceed.pc
+config.mk
+.prove
+
+# Mac specific
+.DS_Store
+*.dSYM
+*~
+*.dylib
+
+# Coverage
+*.gcno
+*.gcda
+*.gcov
+
+# Debugging
+vgcore*
+*.json
+
+# Python
+dist
+*egg*
+.pytest_cache
+*cffi.so
+*cffi.dylib
+__pycache__/
+.ipynb_checkpoints/
+
+# Rust
+/target/
+Cargo.lock
+rust.lcov
+
+# Documentation
+xml/*
+doc/html
+doc/sphinx/build/
+# Example docs automatically copied from source tree
+doc/sphinx/source/examples/
+
+# Output files, videos, and compressed archives should not be added accidentally
+*.avi
+*.bin
+*.bin.info
+*.bz2
+*.cgns
+*.gif
+*.gz
+*.mkv
+*.mp4
+*.msh
+*.ogv
+*.pbin
+*.vtu
+*.webm
+*.xmf
+*.xz
+*.zstd
+perf.data
+
+# Editor Misc
+.cache/
+.history
+.vscode
+.ccls-cache
+.vim
+libCEED.cflags
+libCEED.config
+libCEED.creator
+libCEED.creator.*
+libCEED.cxxflags
+libCEED.files
+libCEED.includes

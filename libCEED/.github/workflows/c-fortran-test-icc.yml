@@ -1,0 +1,36 @@
+name: ICC and IFort
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  LINUX_CPP_COMPONENTS: intel-oneapi-compiler-dpcpp-cpp-and-cpp-classic
+  LINUX_FORTRAN_COMPONENTS: intel-oneapi-compiler-fortran
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-22.04]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Clone Intel install scripts
+        run: |
+          git clone https://github.com/oneapi-src/oneapi-ci.git
+      - name: Install Intel compilers
+        run: |
+          oneapi-ci/scripts/setup_apt_repo_linux.sh
+          oneapi-ci/scripts/apt_depends.sh $LINUX_CPP_COMPONENTS
+          oneapi-ci/scripts/install_linux_apt.sh $LINUX_CPP_COMPONENTS
+          oneapi-ci/scripts/apt_depends.sh $LINUX_FORTRAN_COMPONENTS
+          oneapi-ci/scripts/install_linux_apt.sh $LINUX_FORTRAN_COMPONENTS
+      - name: Build and test libCEED
+        run: |
+          ./.github/workflows/c-fortran-test-icc.sh
+

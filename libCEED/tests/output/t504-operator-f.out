@@ -1,0 +1,41 @@
+CeedOperator
+  15 elements with 8 quadrature points each
+  3 fields
+  2 input fields:
+    Input field 0:
+      Name: "weight"
+      Size: 1
+      EvalMode: quadrature weights
+      No vector
+    Input field 1:
+      Name: "dx"
+      Size: 1
+      EvalMode: gradient
+      Active vector
+  1 output field:
+    Output field 0:
+      Name: "rho"
+      Size: 1
+      EvalMode: none
+      No basis
+      Active vector
+CeedOperator
+  15 elements with 8 quadrature points each
+  3 fields
+  2 input fields:
+    Input field 0:
+      Name: "rho"
+      Size: 1
+      EvalMode: none
+      No basis
+    Input field 1:
+      Name: "u"
+      Size: 2
+      EvalMode: interpolation
+      Active vector
+  1 output field:
+    Output field 0:
+      Name: "v"
+      Size: 2
+      EvalMode: interpolation
+      Active vector

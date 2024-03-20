@@ -1,0 +1,7 @@
+navierstokes
+*.vtr
+*.vts
+*.vtu
+*.log
+*.png
+*.csv
