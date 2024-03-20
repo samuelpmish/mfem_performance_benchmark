@@ -19,10 +19,9 @@ else()
   set(CMAKE_CUDA_ARCHITECTURES 70 CACHE STRING "")
 endif()
 
-set(CEED_DIR ${PROJECT_SOURCE_DIR}/libCEED CACHE STRING "")
-set(MFEM_USE_CEED ON CACHE BOOL "")
-
-
+if (MEFM_USE_CEED)
+  set(CEED_DIR ${PROJECT_SOURCE_DIR}/libCEED CACHE STRING "")
+endif()
 
 add_subdirectory(mfem)
 #add_dependencies(mfem libCEED)
