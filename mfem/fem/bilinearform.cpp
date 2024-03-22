@@ -16,6 +16,8 @@
 #include "../mesh/nurbs.hpp"
 #include <cmath>
 
+#include "timer.hpp"
+
 namespace mfem
 {
 
@@ -430,6 +432,12 @@ void BilinearForm::Assemble(int skip_zeros)
          }
       }
 
+      double sparse_matrix_assembly_time = 0.0;
+      std::vector< double > matrix_calculation_times(domain_integs.Size(), 0.0);
+
+      timer sparse_matrix_assembly_timer;
+      std::vector< timer > element_matrix_timers(domain_integs.Size());
+
       // Element-wise integration
       for (int i = 0; i < fes -> GetNE(); i++)
       {
@@ -444,6 +452,7 @@ void BilinearForm::Assemble(int skip_zeros)
             elmat.SetSize(0);
             for (int k = 0; k < domain_integs.Size(); k++)
             {
+               element_matrix_timers[k].start();
                if ((domain_integs_marker[k] == NULL ||
                     (*(domain_integs_marker[k]))[elem_attr-1] == 1)
                    && !domain_integs[k]->Patchwise())
@@ -460,6 +469,8 @@ void BilinearForm::Assemble(int skip_zeros)
                      elmat += elemmat;
                   }
                }
+               element_matrix_timers[k].stop();
+               matrix_calculation_times[k] += element_matrix_timers[k].elapsed();
             }
             if (elmat.Size() == 0)
             {
@@ -481,13 +492,21 @@ void BilinearForm::Assemble(int skip_zeros)
          }
          else
          {
+            sparse_matrix_assembly_timer.start();
             mat->AddSubMatrix(vdofs, vdofs, *elmat_p, skip_zeros);
             if (hybridization)
             {
                hybridization->AssembleMatrix(i, *elmat_p);
             }
+            sparse_matrix_assembly_timer.stop();
+            sparse_matrix_assembly_time += sparse_matrix_assembly_timer.elapsed();
          }
       }
+
+      for (int k = 0; k < domain_integs.Size(); k++) {
+         std::cout << "k = " << k << " element matrix calculation time: " << matrix_calculation_times[k] * 1000.0 << "ms" << std::endl;
+      }
+      std::cout << "sparse matrix assembly time: " << sparse_matrix_assembly_time * 1000.0 << "ms" << std::endl;
 
       // Patch-wise integration
       if (fes->GetNURBSext())

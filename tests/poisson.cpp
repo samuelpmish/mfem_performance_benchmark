@@ -21,8 +21,11 @@ using namespace mfem;
 
 int main(int argc, char *argv[])
 {
+
+
    // 1. Parse command-line options.
-   const char *mesh_file = "../data/star.mesh";
+   //const char *mesh_file = "../data/star.mesh";
+   const char *mesh_file = "/Users/sam/Dropbox/meshes/rocker_arm_hex.vtk"; // TODO: DELETE
    int order = 1;
    bool pa = false;
    bool fa = false;
@@ -41,8 +44,6 @@ int main(int argc, char *argv[])
    args.AddOption(&fa, "-fa", "--full-assembly", "-no-fa",
                   "--no-full-assembly", "Enable Full Assembly.");
    args.AddOption(&num_refinements, "-ref", "--refinement", "how many refinements to apply to the mesh");
-   args.AddOption(&fa, "-fa", "--full-assembly", "-no-fa",
-                  "--no-full-assembly", "Enable Full Assembly.");
    args.AddOption(&device_config, "-d", "--device",
                   "Device configuration string, see Device::Configure().");
 #ifdef MFEM_USE_CEED
@@ -114,7 +115,7 @@ int main(int argc, char *argv[])
 
    Vector R(x.Size());
 
-   for (int i = 0; i < 4; i++) {
+   for (int i = 0; i < 5; i++) {
      tic();
      a.Mult(x, R);
      R += b;

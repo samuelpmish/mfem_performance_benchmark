@@ -18,6 +18,8 @@
 #include "pgridfunc.hpp"
 #include "ceed/interface/util.hpp"
 
+#include "timer.hpp"
+
 namespace mfem
 {
 
@@ -486,6 +488,10 @@ void PABilinearFormExtension::Mult(const Vector &x, Vector &y) const
    MFEM_VERIFY(!(somePatchwise && !allPatchwise),
                "All or none of the integrators should be patchwise");
 
+   timer gather_timer;
+   std::vector< timer > integrator_timers(iSz);
+   timer scatter_timer;
+
    if (DeviceCanUseCeed() || !elem_restrict || allPatchwise)
    {
       y.UseDevice(true); // typically this is a large vector, so store on device
@@ -507,20 +513,32 @@ void PABilinearFormExtension::Mult(const Vector &x, Vector &y) const
       if (iSz)
       {
          Array<Array<int>*> &elem_markers = *a->GetDBFI_Marker();
+         gather_timer.start();
          elem_restrict->Mult(x, localX);
+         gather_timer.stop();
          localY = 0.0;
          for (int i = 0; i < iSz; ++i)
          {
+            integrator_timers[i].start();
             AddMultWithMarkers(*integrators[i], localX, elem_markers[i], elem_attributes,
                                false, localY);
+            integrator_timers[i].stop();
          }
+         scatter_timer.start();
          elem_restrict->MultTranspose(localY, y);
+         scatter_timer.stop();
       }
       else
       {
          y = 0.0;
       }
    }
+
+   std::cout << "PA gather time: " << gather_timer.elapsed() * 1000.0 << "ms" << std::endl;
+   for (int i = 0; i < iSz; i++) {
+      std::cout << "k = " << i << " integrator calculation time: " << integrator_timers[i].elapsed() * 1000.0 << "ms" << std::endl;
+   }
+   std::cout << "PA scatter time: " << scatter_timer.elapsed() * 1000.0 << "ms" << std::endl;
 
    Array<BilinearFormIntegrator*> &intFaceIntegrators = *a->GetFBFI();
    const int iFISz = intFaceIntegrators.Size();
@@ -714,9 +732,13 @@ void EABilinearFormExtension::Assemble()
    {
       ea_data = 0.0;
    }
-   for (int i = 0; i < integratorCount; ++i)
-   {
+
+   for (int i = 0; i < integratorCount; ++i) {
+      timer stopwatch;
+      stopwatch.start();
       integrators[i]->AssembleEA(*a->FESpace(), ea_data, i);
+      stopwatch.stop();
+      std::cout << "integrators["<<i<<"]->AssembleEA(...): " << stopwatch.elapsed() * 1000.0 << "ms" << std::endl;
    }
 
    faceDofs = trial_fes ->

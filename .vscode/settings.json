@@ -2,8 +2,9 @@
     "cmake.configureArgs": [
         //"-DENABLE_CUDA=ON",
         "-DENABLE_CUDA=OFF",
-        "-DMFEM_USE_CEED=OFF",
+        "-DMFEM_USE_CEED=ON",
         "--profiling-format=google-trace",                                       
         "--profiling-output=cmake-configuration-stage-profiling-data.json"
-    ]
+    ],
+    "cmake.buildDirectory": "${workspaceFolder}/build-${buildType}"
 }
