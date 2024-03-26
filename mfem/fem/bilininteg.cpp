@@ -867,6 +867,12 @@ void DiffusionIntegrator::AssembleElementMatrix
 
    const IntegrationRule *ir = IntRule ? IntRule : &GetRule(el, el);
 
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "Diffusion Integrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
+   }
+
    const NURBSFiniteElement *NURBSFE =
       dynamic_cast<const NURBSFiniteElement *>(&el);
 
@@ -1300,6 +1306,12 @@ void MassIntegrator::AssembleElementMatrix
 
    const IntegrationRule *ir = IntRule ? IntRule : &GetRule(el, el, Trans);
 
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "Mass Integrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
+   }
+
    elmat = 0.0;
    for (int i = 0; i < ir->GetNPoints(); i++)
    {
@@ -1568,6 +1580,12 @@ void VectorMassIntegrator::AssembleElementMatrix
       {
          ir = &IntRules.Get(el.GetGeomType(), order);
       }
+   }
+
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "VectorMassIntegrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
    }
 
    elmat = 0.0;
@@ -2019,6 +2037,12 @@ void CurlCurlIntegrator::AssembleElementMatrix
       }
 
       ir = &IntRules.Get(el.GetGeomType(), order);
+   }
+
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "CurlCurlIntegrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
    }
 
    elmat = 0.0;
@@ -2480,6 +2504,12 @@ void VectorFEMassIntegrator::AssembleElementMatrix(
       // int order = 2 * el.GetOrder();
       int order = Trans.OrderW() + 2 * el.GetOrder();
       ir = &IntRules.Get(el.GetGeomType(), order);
+   }
+
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "VectorFEMassIntegrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
    }
 
    for (int i = 0; i < ir->GetNPoints(); i++)
@@ -3042,6 +3072,12 @@ void ElasticityIntegrator::AssembleElementMatrix(
    {
       int order = 2 * Trans.OrderGrad(&el); // correct order?
       ir = &IntRules.Get(el.GetGeomType(), order);
+   }
+
+   static bool first_time = true;
+   if (first_time) {
+      std::cout << "ElasticityIntegrator using " << ir->GetNPoints() << " quadrature points" << std::endl;
+      first_time = false;
    }
 
    elmat = 0.0;
